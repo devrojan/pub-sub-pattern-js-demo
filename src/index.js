@@ -1,24 +1,40 @@
 const EventBusFactory = () => {
-    const listeners = {};
+  const listeners = {};
 
-    const fire = (event, payload) => {
-        // publish message here
-    };
+  const fire = (event, payload) => {
+    // publish message here
 
-    const listen = (event, listener) => {
-        // subscribe a message
-    };
-
-    const unsubscribe = (event, removeListener) => {
-        // unsubscribe from event
-    };
-
-    return {
-        fire,
-        listen,
-        unsubscribe
+    if (listeners[event] === undefined) {
+      return;
     }
-}
 
+    listeners[event].forEach((listener) => listener(payload));
 
-module.exports = EventBusFactory
+    return listeners[event].map((listener) => listener(payload));
+  };
+
+  const listen = (event, listener) => {
+    // subscribe a message
+    if (listeners[event] === undefined) {
+      listeners[event] = [];
+    }
+
+    listeners[event].push(listener);
+  };
+
+  const unsubscribe = (event, removeListener) => {
+    // unsubscribe from event
+    if (listeners[event] === undefined) {
+      return;
+    }
+    listeners[event] = [];
+  };
+
+  return {
+    fire,
+    listen,
+    unsubscribe,
+  };
+};
+
+module.exports = EventBusFactory;
